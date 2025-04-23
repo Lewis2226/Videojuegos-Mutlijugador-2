@@ -114,6 +114,6 @@ public class PlayerController : NetworkBehaviour
 
     public bool IsAlive()
     {
-        return health.Value >= 0;
+        return health.Value > 0;
     }
 }
