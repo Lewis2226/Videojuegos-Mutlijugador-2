@@ -47,7 +47,6 @@ public class PlayerController : NetworkBehaviour
             if (IsAlive())
             {
                 float mag = desiredDirection.magnitude;
-                Debug.Log(mag);
 
                 if (mag > 0)
                 {
@@ -65,7 +64,7 @@ public class PlayerController : NetworkBehaviour
                 }
                 
 
-                //Prueba del sistea, de vida
+                //Prueba del sistema, de vida
                 if (Input.GetKeyDown(KeyCode.T))
                 {
                     TakeDamage(5);
@@ -104,7 +103,7 @@ public class PlayerController : NetworkBehaviour
             {
                 health.Value = 0;
 
-                if (IsAlive())
+                if (!IsAlive())
                 {
                     OnDeath();
                 }
@@ -123,8 +122,9 @@ public class PlayerController : NetworkBehaviour
         Debug.Log(name + " me muero");
         audioSource.clip = DeathSound;
         audioSource.Play();
-        animator.SetFloat("movement", 0f);
         animator.SetBool("dead", true);
+        animator.SetFloat("movement", 0f);
+        
         
     }
 
