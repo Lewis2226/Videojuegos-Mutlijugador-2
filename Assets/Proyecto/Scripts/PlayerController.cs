@@ -19,6 +19,7 @@ public class PlayerController : NetworkBehaviour
     public AudioClip DamageSound;
     public AudioClip DeathSound;
     AudioSource audioSource;
+    Animator animator;
 
     public override void OnNetworkSpawn()
     {
@@ -32,6 +33,7 @@ public class PlayerController : NetworkBehaviour
     {
         hud = GameObject.Find("GameManager").GetComponent<UiManager>();
         audioSource = GetComponent<AudioSource>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -45,6 +47,8 @@ public class PlayerController : NetworkBehaviour
             if (IsAlive())
             {
                 float mag = desiredDirection.magnitude;
+                Debug.Log(mag);
+
                 if (mag > 0)
                 {
                     //transform.forward = desiredDirection;
@@ -53,18 +57,27 @@ public class PlayerController : NetworkBehaviour
                     Quaternion q = Quaternion.LookRotation(desiredDirection);
                     transform.rotation = Quaternion.Slerp(transform.rotation, q, Time.deltaTime * 10);
                     transform.Translate(0, 0, speed * Time.deltaTime);
+                    animator.SetFloat("movement", mag);
                 }
+                else
+                {
+                   animator.SetFloat("movement", 0f);
+                }
+                
 
                 //Prueba del sistea, de vida
                 if (Input.GetKeyDown(KeyCode.T))
                 {
                     TakeDamage(5);
                 }
+                
             }
             
+
             hud.labelHealth.text = health.Value.ToString();
         }
     }
+
 
     //RPC= 
     [Rpc(SendTo.Server)]
@@ -110,6 +123,9 @@ public class PlayerController : NetworkBehaviour
         Debug.Log(name + " me muero");
         audioSource.clip = DeathSound;
         audioSource.Play();
+        animator.SetFloat("movement", 0f);
+        animator.SetBool("dead", true);
+        
     }
 
     public bool IsAlive()
