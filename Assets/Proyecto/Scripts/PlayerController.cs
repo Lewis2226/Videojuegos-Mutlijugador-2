@@ -3,17 +3,25 @@ using Unity.Netcode;
 
 public class PlayerController : NetworkBehaviour
 {
+    [Header("Movement")]
     //hacia donde apunte el character
     Vector3 desiredDirection;
     public float speed = 1.0f;
+    float characetSpeed = 0f;
 
     //salud del jugador
     //public int health = 100;
+
+    [Header("Camera")]
+    public Vector3 CameraOffset = new Vector3(0, 4,-3);
+    public Vector3 CameraViewOffset = new Vector3(0, 1.5f,0);
+    Camera cam;
 
     //networkvariable para replicar la vida
     NetworkVariable<int> health = new NetworkVariable<int> (100,NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     private UiManager hud;
+    private GameManager gameManager;
 
     [Header("SFX")]
     public AudioClip DamageSound;
@@ -32,13 +40,26 @@ public class PlayerController : NetworkBehaviour
     void Start()
     {
         hud = GameObject.Find("GameManager").GetComponent<UiManager>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         audioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
+
+        transform.position = gameManager.GetSpawnPoint();
+
+        //asignar la camara
+        if (IsOwner)
+        {
+            cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+            cam.transform.position = transform.position + CameraOffset;
+            cam.transform.LookAt(transform.position + CameraViewOffset);
+        }
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        Vector3 currentPosition = transform.position;
         if (IsOwner)
         {
             desiredDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
@@ -56,11 +77,11 @@ public class PlayerController : NetworkBehaviour
                     Quaternion q = Quaternion.LookRotation(desiredDirection);
                     transform.rotation = Quaternion.Slerp(transform.rotation, q, Time.deltaTime * 10);
                     transform.Translate(0, 0, speed * Time.deltaTime);
-                    animator.SetFloat("movement", mag);
+                    
                 }
                 else
                 {
-                   animator.SetFloat("movement", 0f);
+                   
                 }
                 
 
@@ -71,10 +92,18 @@ public class PlayerController : NetworkBehaviour
                 }
                 
             }
-            
 
+            //actualizar la camara
+            cam.transform.position = transform.position + CameraOffset;
+            cam.transform.LookAt(transform.position + CameraViewOffset);
+
+            //actualizar Hud
             hud.labelHealth.text = health.Value.ToString();
+
         }
+        characetSpeed = (transform.position - currentPosition).magnitude / Time.deltaTime;
+        Debug.Log("Del jugador " +  name + characetSpeed);
+        animator.SetFloat("movement", characetSpeed);
     }
 
 
