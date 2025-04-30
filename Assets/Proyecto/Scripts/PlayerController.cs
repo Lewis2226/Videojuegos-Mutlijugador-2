@@ -1,5 +1,9 @@
 using UnityEngine;
 using Unity.Netcode;
+using Unity.Netcode.Components;
+using UnityEngine.InputSystem.HID;
+using TMPro;
+using UnityEditor.PackageManager;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -17,18 +21,29 @@ public class PlayerController : NetworkBehaviour
     public Vector3 CameraViewOffset = new Vector3(0, 1.5f,0);
     Camera cam;
 
-    //networkvariable para replicar la vida
-    NetworkVariable<int> health = new NetworkVariable<int> (100,NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-    private UiManager hud;
-    private GameManager gameManager;
-
+    [Header("Weapon")]
+    public GameObject proyectilePrefab;
+    public Transform weaponSocket;
+    public float weaponCadence = 0.8f;
+    float lastShootTimer = 0;
+    
     [Header("SFX")]
     public AudioClip DamageSound;
     public AudioClip DeathSound;
     AudioSource audioSource;
-    Animator animator;
 
+    [Header("Animator")]
+    Animator animator;
+    NetworkAnimator networkAnimator;
+
+    private TMP_Text playerName;
+
+    //networkvariable para replicar la vida
+    NetworkVariable<int> health = new NetworkVariable<int>(100, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    private UiManager hud;
+    private GameManager gameManager;
     public override void OnNetworkSpawn()
     {
         Debug.Log("Hola mundo soy un " + (IsClient? "cliente" : "servidor"));
@@ -43,6 +58,7 @@ public class PlayerController : NetworkBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         audioSource = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
+        networkAnimator = GetComponent<NetworkAnimator>();
 
         transform.position = gameManager.GetSpawnPoint();
 
@@ -54,6 +70,17 @@ public class PlayerController : NetworkBehaviour
             cam.transform.LookAt(transform.position + CameraViewOffset);
         }
 
+        CreatePlayerNameHUD();
+
+    }
+
+    void CreatePlayerNameHUD()
+    {
+        if (IsClient)
+        {
+          playerName =  Instantiate(hud.playerNameTemplate, hud.PanelHUD).GetComponent<TMP_Text>();
+          playerName.gameObject.SetActive(true);
+        }
     }
 
     // Update is called once per frame
@@ -64,6 +91,8 @@ public class PlayerController : NetworkBehaviour
         {
             desiredDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
             desiredDirection.Normalize();
+
+           
 
             if (IsAlive())
             {
@@ -79,18 +108,19 @@ public class PlayerController : NetworkBehaviour
                     transform.Translate(0, 0, speed * Time.deltaTime);
                     
                 }
-                else
-                {
-                   
-                }
-                
+               
 
                 //Prueba del sistema, de vida
                 if (Input.GetKeyDown(KeyCode.T))
                 {
                     TakeDamage(5);
                 }
-                
+
+                if (Input.GetButtonDown("Fire1"))
+                {
+                    FireWeaponRPC();
+                }
+
             }
 
             //actualizar la camara
@@ -103,7 +133,20 @@ public class PlayerController : NetworkBehaviour
         }
         characetSpeed = (transform.position - currentPosition).magnitude / Time.deltaTime;
         Debug.Log("Del jugador " +  name + characetSpeed);
-        animator.SetFloat("movement", characetSpeed);
+        Animate("movement", characetSpeed);
+
+        if (IsServer)
+        {
+            lastShootTimer += Time.deltaTime;
+            Debug.Log(lastShootTimer);
+        }
+
+
+        if (IsClient)
+        {
+            Camera mainCam = GameObject.Find("Main Camera").GetComponent<Camera>();
+            playerName.transform.position = mainCam.WorldToScreenPoint(transform.position + new Vector3(0, 1.2f, 0));
+        }
     }
 
 
@@ -113,6 +156,25 @@ public class PlayerController : NetworkBehaviour
     {
         Debug.Log("RPC recibido TakeDamage");
         TakeDamage(amount);
+    }
+
+    [Rpc(SendTo.Server)]
+    public void AnimateRPC(string parameter, float value)
+    {
+        Animate(parameter, value);
+    }
+
+    public void Animate(string parameter, float value)
+    {
+        if (!IsServer) 
+        { 
+          AnimateRPC(parameter, value);
+        }
+        else
+        {
+            networkAnimator.Animator.SetFloat(parameter, value);
+        }
+
     }
 
     public void TakeDamage(int amount)
@@ -160,5 +222,22 @@ public class PlayerController : NetworkBehaviour
     public bool IsAlive()
     {
         return health.Value > 0;
+    }
+
+    [Rpc(SendTo.Server)]
+    public void FireWeaponRPC()
+    {
+
+        if (lastShootTimer < weaponCadence) return;
+
+
+        if (proyectilePrefab != null) 
+        {
+            Projectile proj = Instantiate(proyectilePrefab, weaponSocket.position,weaponSocket.rotation).GetComponent<Projectile>();
+            proj.direction = transform.forward; //SAle en la direccion que apuntta eñl personaje 
+            proj.instigator = this; // quien dispara el proyectile
+            proj.GetComponent<NetworkObject>().Spawn();
+            lastShootTimer = 0;
+        }       
     }
 }

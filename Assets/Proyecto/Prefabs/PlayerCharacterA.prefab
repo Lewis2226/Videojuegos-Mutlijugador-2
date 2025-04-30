@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1562006762914684858
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7386272143383183607}
+  m_Layer: 0
+  m_Name: WeaponSocket
+  m_TagString: Untagged
+  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7386272143383183607
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1562006762914684858}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.315, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1869033661881341078}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &7103354581232628815
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -54,7 +85,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 8891244130364874969, guid: ef9e07122a7692549ab9ddb441f19255, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7386272143383183607}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ef9e07122a7692549ab9ddb441f19255, type: 3}
       insertIndex: -1
@@ -81,6 +115,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 7060641977605276234}
   m_SourcePrefab: {fileID: 100100000, guid: ef9e07122a7692549ab9ddb441f19255, type: 3}
+--- !u!4 &1869033661881341078 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8891244130364874969, guid: ef9e07122a7692549ab9ddb441f19255, type: 3}
+  m_PrefabInstance: {fileID: 7103354581232628815}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7950338278464325918 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ef9e07122a7692549ab9ddb441f19255, type: 3}
@@ -127,6 +166,9 @@ MonoBehaviour:
   speed: 1
   CameraOffset: {x: 0, y: 4, z: -3}
   CameraViewOffset: {x: 0, y: 1.5, z: 0}
+  proyectilePrefab: {fileID: 4490945227286493626, guid: 912609cf65061bd4d8a53fb47d0b2232, type: 3}
+  weaponSocket: {fileID: 7386272143383183607}
+  weaponCadence: 0.8
   DamageSound: {fileID: 8300000, guid: 794be7c4bd9e64c9bbb9776937807a9e, type: 3}
   DeathSound: {fileID: 8300000, guid: 9641e06a7775b4469a4744010f059e6e, type: 3}
 --- !u!114 &7951531729846077613

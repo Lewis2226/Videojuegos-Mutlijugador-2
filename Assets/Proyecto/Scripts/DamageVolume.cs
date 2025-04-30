@@ -7,8 +7,8 @@ public class DamageVolume : MonoBehaviour
     //Daño causado en cada paso
     public float damagePerStep = 10f;
     //Cada cuantos segundos causa daño
-    public float damageRate = 2f;
-    private float damageTimer = 0;
+    public float damageRate = 5f;
+    private float damageTimer = 0f;
 
     //como es juego multiplayer, puede ser quer haysa varios jugadores e¿adentro del fuego purificador
     public List<PlayerController> player;
@@ -50,7 +50,7 @@ public class DamageVolume : MonoBehaviour
 
     public void OnTriggerStay(Collider other)
     {
-        if(damageTimer > damageRate)
+        if(damageTimer == damageRate)
         {
             foreach (PlayerController pc in player)
             {

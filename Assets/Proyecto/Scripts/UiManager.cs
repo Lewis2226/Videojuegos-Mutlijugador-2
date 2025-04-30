@@ -8,8 +8,8 @@ public class UiManager : MonoBehaviour
     public RectTransform PanelMainMenu;
     public RectTransform PanelClient;
     public RectTransform PanelHUD;
-
     public TMP_Text labelHealth;
+    public GameObject playerNameTemplate;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
