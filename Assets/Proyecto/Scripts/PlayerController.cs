@@ -38,6 +38,7 @@ public class PlayerController : NetworkBehaviour
     NetworkAnimator networkAnimator;
 
     private TMP_Text playerName;
+    public int nameID = 0; //Id del nombre seleccionado
 
     //networkvariable para replicar la vida
     NetworkVariable<int> health = new NetworkVariable<int>(100, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -69,7 +70,7 @@ public class PlayerController : NetworkBehaviour
             cam.transform.position = transform.position + CameraOffset;
             cam.transform.LookAt(transform.position + CameraViewOffset);
         }
-
+        nameID = hud.selectedNameIndex;
         CreatePlayerNameHUD();
 
     }
@@ -91,8 +92,7 @@ public class PlayerController : NetworkBehaviour
         {
             desiredDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
             desiredDirection.Normalize();
-
-           
+  
 
             if (IsAlive())
             {
@@ -132,19 +132,18 @@ public class PlayerController : NetworkBehaviour
 
         }
         characetSpeed = (transform.position - currentPosition).magnitude / Time.deltaTime;
-        Debug.Log("Del jugador " +  name + characetSpeed);
         Animate("movement", characetSpeed);
 
         if (IsServer)
         {
             lastShootTimer += Time.deltaTime;
-            Debug.Log(lastShootTimer);
         }
 
 
         if (IsClient)
         {
             Camera mainCam = GameObject.Find("Main Camera").GetComponent<Camera>();
+            playerName.text = hud.namesList[nameID];
             playerName.transform.position = mainCam.WorldToScreenPoint(transform.position + new Vector3(0, 1.2f, 0));
         }
     }

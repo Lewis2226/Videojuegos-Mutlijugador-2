@@ -2152,9 +2152,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PanelMainMenu: {fileID: 1608409533}
   PanelClient: {fileID: 68420053}
+  namesSelector: {fileID: 1783344278}
   PanelHUD: {fileID: 2026286711}
   labelHealth: {fileID: 1012343283}
   playerNameTemplate: {fileID: 2062693398}
+  namesList: []
 --- !u!4 &776059973
 Transform:
   m_ObjectHideFlags: 0
