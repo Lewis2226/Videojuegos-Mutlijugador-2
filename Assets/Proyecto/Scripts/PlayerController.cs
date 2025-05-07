@@ -4,6 +4,8 @@ using Unity.Netcode.Components;
 using UnityEngine.InputSystem.HID;
 using TMPro;
 using UnityEditor.PackageManager;
+using NUnit.Framework;
+using System.Collections.Generic;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -38,11 +40,22 @@ public class PlayerController : NetworkBehaviour
     NetworkAnimator networkAnimator;
 
     private TMP_Text playerName;
-    public int nameID = 0; //Id del nombre seleccionado
 
     //networkvariable para replicar la vida
     NetworkVariable<int> health = new NetworkVariable<int>(100, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
+    //public int nameID = 0; //Id del nombre seleccionado
+    NetworkVariable<int> nameID = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    
+    //Similar al nombre un id de accesorio
+    NetworkVariable<int> hatID = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    [Header("Accesories")]
+    public Transform hatSocekt;
+    public List<GameObject> prefabhat = new List<GameObject>();
+    bool hatSpawned = false; //Si ya tiene sombrero
+        
     private UiManager hud;
     private GameManager gameManager;
     public override void OnNetworkSpawn()
@@ -50,6 +63,8 @@ public class PlayerController : NetworkBehaviour
         Debug.Log("Hola mundo soy un " + (IsClient? "cliente" : "servidor"));
         Debug.Log("IsClient = " + IsClient + ", IsServer = " + IsServer + ", IsHost = " + IsHost);
         Debug.Log(name + " Is owner " + IsOwner);
+
+        hatID.OnValueChanged += SpawnHat;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -69,10 +84,34 @@ public class PlayerController : NetworkBehaviour
             cam = GameObject.Find("Main Camera").GetComponent<Camera>();
             cam.transform.position = transform.position + CameraOffset;
             cam.transform.LookAt(transform.position + CameraViewOffset);
+            SetNameIdRPC(hud.selectedNameIndex);
+            SetSombreIdRPC(hud.selectedSombrero);
         }
-        nameID = hud.selectedNameIndex;
+
+        if (!IsOwner)
+        {
+            SpawnHat(0, hatID.Value);
+        }
+        
         CreatePlayerNameHUD();
 
+    }
+
+    void SpawnHat(int old, int newval)
+    {
+        if (hatSpawned)
+        {
+            if(newval != old)
+            {
+                Debug.Log("Se cambio el sombrero de " + old + " a" + newval);
+                Destroy(hatSocekt.GetChild(0).gameObject);
+                hatSpawned = false;
+            }
+        }
+
+        //spawnear el sombrero
+        GameObject hat = Instantiate(prefabhat[hatID.Value], hatSocekt.position, hatSocekt.rotation, hatSocekt.transform);
+        hatSpawned = true;
     }
 
     void CreatePlayerNameHUD()
@@ -143,7 +182,7 @@ public class PlayerController : NetworkBehaviour
         if (IsClient)
         {
             Camera mainCam = GameObject.Find("Main Camera").GetComponent<Camera>();
-            playerName.text = hud.namesList[nameID];
+            playerName.text = hud.namesList[nameID.Value];
             playerName.transform.position = mainCam.WorldToScreenPoint(transform.position + new Vector3(0, 1.2f, 0));
         }
     }
@@ -239,4 +278,17 @@ public class PlayerController : NetworkBehaviour
             lastShootTimer = 0;
         }       
     }
+
+    //Envia al servidor el id deñ nombre selecionado
+    [Rpc(SendTo.Server)]
+    public void SetNameIdRPC(int idx)
+    {
+        nameID.Value = idx;
+    }
+
+    [Rpc(SendTo.Server)]
+    public void SetSombreIdRPC(int idx)
+    {
+        hatID.Value = idx;
+    } 
 }

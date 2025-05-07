@@ -26,7 +26,8 @@ public class UiManager : MonoBehaviour
 
     //lista  de los nombres permitidos
     public List<string> namesList = new List<string>();
-    public int selectedNameIndex { get{return namesSelector.value;}} 
+    public int selectedNameIndex { get{return namesSelector.value;}}
+    public int selectedSombrero;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -96,6 +97,12 @@ public class UiManager : MonoBehaviour
         NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address = ip;
         NetworkManager.Singleton.StartClient();
     } 
+
+    public void OnButtonHat(int idx)
+    {
+        selectedSombrero = idx;
+        Debug.Log("Sombrero slecionado: " + idx);
+    }
 
         
 }

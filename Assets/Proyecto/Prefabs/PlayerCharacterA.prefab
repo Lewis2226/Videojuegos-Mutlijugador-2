@@ -31,6 +31,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1869033661881341078}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5583979006355144473
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7958148459735705805}
+  m_Layer: 0
+  m_Name: HatSocket
+  m_TagString: Untagged
+  m_Icon: {fileID: 7422848464349959988, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7958148459735705805
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5583979006355144473}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.309, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8913504814013934938}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &7103354581232628815
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -89,6 +120,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8891244130364874969, guid: ef9e07122a7692549ab9ddb441f19255, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7386272143383183607}
+    - targetCorrespondingSourceObject: {fileID: 1812433027226884373, guid: ef9e07122a7692549ab9ddb441f19255, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7958148459735705805}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ef9e07122a7692549ab9ddb441f19255, type: 3}
       insertIndex: -1
@@ -171,6 +205,11 @@ MonoBehaviour:
   weaponCadence: 0.8
   DamageSound: {fileID: 8300000, guid: 794be7c4bd9e64c9bbb9776937807a9e, type: 3}
   DeathSound: {fileID: 8300000, guid: 9641e06a7775b4469a4744010f059e6e, type: 3}
+  hatSocekt: {fileID: 7958148459735705805}
+  prefabhat:
+  - {fileID: 314991360654901693, guid: caffa30328e1a1d44926374c21f217df, type: 3}
+  - {fileID: 3898950342112862462, guid: be6ff420e4347db4ca7a7357ffcecf8b, type: 3}
+  - {fileID: 3858801285513788883, guid: 5364a38852c5a114f96007e967994394, type: 3}
 --- !u!114 &7951531729846077613
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -391,3 +430,8 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!4 &8913504814013934938 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1812433027226884373, guid: ef9e07122a7692549ab9ddb441f19255, type: 3}
+  m_PrefabInstance: {fileID: 7103354581232628815}
+  m_PrefabAsset: {fileID: 0}
