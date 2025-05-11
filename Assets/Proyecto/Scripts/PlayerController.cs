@@ -1,9 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
 using Unity.Netcode.Components;
-using UnityEngine.InputSystem.HID;
 using TMPro;
-using UnityEditor.PackageManager;
 using NUnit.Framework;
 using System.Collections.Generic;
 
@@ -103,7 +101,7 @@ public class PlayerController : NetworkBehaviour
         {
             if(newval != old)
             {
-                Debug.Log("Se cambio el sombrero de " + old + " a" + newval);
+                Debug.Log("Se cambio el sombrero de " + old + " a " + newval);
                 Destroy(hatSocekt.GetChild(0).gameObject);
                 hatSpawned = false;
             }
@@ -272,7 +270,7 @@ public class PlayerController : NetworkBehaviour
         if (proyectilePrefab != null) 
         {
             Projectile proj = Instantiate(proyectilePrefab, weaponSocket.position,weaponSocket.rotation).GetComponent<Projectile>();
-            proj.direction = transform.forward; //SAle en la direccion que apuntta eñl personaje 
+            proj.direction = transform.forward; //Sale en la direccion que apuntta el personaje 
             proj.instigator = this; // quien dispara el proyectile
             proj.GetComponent<NetworkObject>().Spawn();
             lastShootTimer = 0;
